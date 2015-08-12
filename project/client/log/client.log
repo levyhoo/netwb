@@ -1,0 +1,16 @@
+0x00000428 2015-08-10 17:12:35,410 [INFO] req func : Client::doSomething, 
+0x00001390 2015-08-10 17:12:35,464 [INFO] resp func : Client::onDoSomething
+0x00001390 2015-08-10 17:12:38,417 [INFO] req func : Client::doSomething, 
+0x00001390 2015-08-10 17:12:38,480 [INFO] resp func : Client::onDoSomething
+0x00001390 2015-08-10 17:12:41,422 [INFO] req func : Client::doSomething, 
+0x00001390 2015-08-10 17:12:41,471 [INFO] resp func : Client::onDoSomething
+0x00001390 2015-08-10 17:12:44,425 [INFO] req func : Client::doSomething, 
+0x00001390 2015-08-10 17:12:44,495 [INFO] resp func : Client::onDoSomething
+0x00001390 2015-08-10 17:12:47,431 [INFO] req func : Client::doSomething, 
+0x00001390 2015-08-10 17:12:47,502 [INFO] resp func : Client::onDoSomething
+0x00001390 2015-08-10 17:12:50,437 [INFO] req func : Client::doSomething, 
+0x00001390 2015-08-10 17:12:50,517 [INFO] resp func : Client::onDoSomething
+0x00001390 2015-08-10 17:12:53,443 [INFO] req func : Client::doSomething, 
+0x00001390 2015-08-10 17:12:53,514 [INFO] resp func : Client::onDoSomething
+0x00001390 2015-08-10 17:12:56,448 [INFO] req func : Client::doSomething, 
+0x00001390 2015-08-10 17:12:56,515 [INFO] resp func : Client::onDoSomething
