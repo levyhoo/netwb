@@ -62,9 +62,10 @@ public :
     {
         pt.put(field, value);
     }
+    //
     void makeArrayElement(const Type& value, ptree& pt)
     {
-        pt.push_back(std::make_pair("", value));
+        pt.push_back(std::make_pair<string, Type>("", value));
     }
 };
 
@@ -198,7 +199,7 @@ public:
             }
             pt.add(field, value);
             std::stringstream ssRet;
-            write_json(ssRet, pt);
+            write_json(ssRet, pt, false);
             strJson.clear();
             size_t len = ssRet.str().size() + 1;
             strJson.resize(len);
@@ -254,7 +255,7 @@ public:
             boost::lock_guard<boost::mutex> lock(m_mutex);
             pt.put_child("param", pts);
             std::stringstream ss;
-            write_json(ss, pt);
+            write_json(ss, pt, false);
             size_t len = ss.str().size() + 1;
             resp.resize(len);
             memcpy(&resp[0], ss.str().c_str(), len);
@@ -268,9 +269,21 @@ public:
         return false;
     }
 
-
+    std::string str(ByteArray& ret)
+    {
+        try
+        {
+            boost::lock_guard<boost::mutex> lock(m_mutex);
+            std::stringstream ss;
+            ss<<(char*)&ret[0];
+            return ss.str();
+        }
+        catch (...)
+        {
+        }
+        return string("");
+    }
     
-
 };
 
 

@@ -85,13 +85,13 @@ int main(int argc, char** argv)
     }
     ths.join_all(    
     */
-    vector<int> ids, rids;
-    ids.push_back(1);
-    ids.push_back(2);
-    ids.push_back(3);
-    ids.push_back(4);
-    ids.push_back(5);
-    ids.push_back(6);
+    vector<string> ids, rids;
+    ids.push_back("1");
+    ids.push_back("1");
+    ids.push_back("1");
+    ids.push_back("1");
+    ids.push_back("1");
+    ids.push_back("1");
     
     typedef boost::shared_ptr<string> stringPtr;
     ByteArray resp;
@@ -104,9 +104,19 @@ int main(int argc, char** argv)
     MAKEREQBEGIN("func");
     ADDPARAM("ids", ids);
     ADDPARAM("name", name);
-    MAKEREQEND(resp);
+    MAKEREQEND(req);
+
+    cout<<"req: "<<jsonHelper::getInstance()->str(req)<<endl;
+    cout<<"resp: "<<jsonHelper::getInstance()->str(resp)<<endl;
+    string v;
+    jsonHelper::getInstance()->append("hello", 1, req);
+    jsonHelper::getInstance()->append("hello", 2, req);
+    jsonHelper::getInstance()->append("hello", 3, req);
+    jsonHelper::getInstance()->append("hello", 4, req);
+    jsonHelper::getInstance()->getField(v, "hello", req);
 
     
+    cout<<"req: "<<jsonHelper::getInstance()->str(req)<<endl;
 
 
 
