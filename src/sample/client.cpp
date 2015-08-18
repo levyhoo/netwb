@@ -3,7 +3,7 @@
 #include "Clog.h"
 
 Client::Client(boost::asio::io_service& ioservice, string serverIp, unsigned short serverPort)
-:BaseClient(ioservice, serverIp, serverPort)
+:BaseClient(ioservice, serverIp, serverPort), m_autoReConnect(true)
 {
 
 }
@@ -15,7 +15,11 @@ void Client::onConnectionMade(boost::shared_ptr<NetConnection> connection)
 
 void Client::onConnectionError(const boost::system::error_code& err, boost::shared_ptr<NetConnection> connection)
 {
-
+    while (!isConnected() && m_autoReConnect)
+    {
+        start(false);
+        boost::this_thread::sleep(boost::posix_time::seconds(3));
+    }
 }
 
 ClientPtr Client::getPtr()

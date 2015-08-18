@@ -3,11 +3,11 @@
 #include <common/Constants.h>
 #include <net/stream.h>
 #include <common/NetCommand.h>
+#include "Clog.h"
 
 BaseServer::BaseServer(io_service& ioservice, string listenIp, unsigned short listenPort)
 :NetServer(ioservice, listenIp, listenPort)
 {
-
 }
 
 void BaseServer::registerFunc(const string& method, const ProcessFunc& func)
@@ -79,12 +79,13 @@ void BaseServer::onPackageReceived(const NetPackageHeader& header, const unsigne
             }
             else
             {
-                //deal exception
+                //deal else
             }
         }
         break;
     case NET_CMD_KEEPALIVE:
         {
+            STDLOG(LLV_INFO, "send keepalive packet, peer : %s", connection->peerAddress().c_str());
             //发送保活反馈
             NetPackageHeader header(NET_CMD_KEEPALIVE_RESPONSE, 0, 0, 0);
             header.m_length = sizeof(r_int32) + NET_PACKAGE_HEADER_LENGTH;
@@ -96,6 +97,9 @@ void BaseServer::onPackageReceived(const NetPackageHeader& header, const unsigne
         }
         break;
     case NET_CMD_KEEPALIVE_RESPONSE:
+        {
+            STDLOG(LLV_INFO, "get keepalive packet, peer : %s", connection->peerAddress().c_str());
+        }
         break;
     default:
         break;
@@ -146,4 +150,3 @@ void BaseServer::sendResp(const ByteArray& resp, r_int16& cmd, const r_int64& se
     header.encode(bytes);
     connection->sendData(bytes, bytes.size());
 }
-

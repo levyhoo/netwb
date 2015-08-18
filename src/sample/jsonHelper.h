@@ -41,7 +41,6 @@ public :
     }
     void getField(const string& field, Type& value, const ByteArray& strJson)
     {
-
         ptree pt;
         read(field, pt, strJson);
         value = pt.get<Type>(field);
@@ -285,6 +284,51 @@ public:
     }
     
 };
+
+#define CUSTOM_DECLEAR(Type) \
+template <>\
+class Codec<Type>\
+{\
+    CODEC_DECLEAR();\
+public :\
+    void getField(const string& field, Type& value, const ByteArray& strJson)\
+    {\
+        for(size_t i=0; i<Type::m_desc.fields_.size(); i++)\
+        {\
+            string type_ = Type::m_desc.fields_[i].type_;\
+            string name_ = Type::m_desc.fields_[i].name_;\
+            Codec<#type_>::instance().getField(#name_), value.#name_, strJson)\
+        }\
+    }\
+    void makeJson(const string& field, const Type& value, ByteArray& strJson)\
+    {\
+    }\
+    void makeJsonPt(const string& field, const Type& value, ptree& pt)\
+    {\
+    }\
+}\
+\
+template <>\
+class Codec<boost::shared_ptr<Type> >\
+    {\
+    CODEC_DECLEAR();\
+public :\
+    void getField(const string& field, boost::shared_ptr<Type>& value, const ByteArray& strJson)\
+    {\
+        for(size_t i=0; i<Type::m_desc.fields_.size(); i++)\
+        {\
+            string type_ = Type::m_desc.fields_[i].type_;\
+            string name_ = Type::m_desc.fields_[i].name_;\
+            Codec<#type_>::instance().getField(#name_), *value.#name_, strJson)\
+        }\
+    }\
+    void makeJson(const string& field, const boost::shared_ptr<Type>& value, ByteArray& strJson)\
+    {\
+    }\
+    void makeJsonPt(const string& field, const boost::shared_ptr<Type>& value, ptree& pt)\
+    {\
+    }\
+}\
 
 
 #define MAKERESPBEGIN(status) \

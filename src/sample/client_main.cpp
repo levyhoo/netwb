@@ -48,7 +48,7 @@ void send(ClientPtr client)
 
 int main(int argc, char** argv)
 {
-    /*
+    
     int threadsnum = 1;
     if (argc == 2)
     {
@@ -70,53 +70,10 @@ int main(int argc, char** argv)
         }
     }
     
-// 
-//     ths.create_thread(boost::bind(&boost::asio::io_service::run, &ioservice));
-//     ths.join_all();
-// 
-// 
-//     boost::asio::io_service iowk;
-    client_pool_ptr pool = client_pool_ptr(new client_pool());
-    pool->init(1000, boost::bind(&creat_test_client, _1, "127.0.0.1", 12345));
-    boost::thread_group ths;
-    for (int i=0; i<1000; i++)
-    {
-        ths.create_thread(boost::bind(testClient, pool));
-    }
-    ths.join_all(    
-    */
-    vector<string> ids, rids;
-    ids.push_back("1");
-    ids.push_back("1");
-    ids.push_back("1");
-    ids.push_back("1");
-    ids.push_back("1");
-    ids.push_back("1");
-    
-    typedef boost::shared_ptr<string> stringPtr;
-    ByteArray resp;
-    ByteArray req;
-    stringPtr name = stringPtr(new string("huliwei"));
-    MAKERESPBEGIN("status");
-    ADDPARAM("ids", ids);
-    ADDPARAM("name", name);
-    MAKERESPEND(resp);
-    MAKEREQBEGIN("func");
-    ADDPARAM("ids", ids);
-    ADDPARAM("name", name);
-    MAKEREQEND(req);
 
-    cout<<"req: "<<jsonHelper::getInstance()->str(req)<<endl;
-    cout<<"resp: "<<jsonHelper::getInstance()->str(resp)<<endl;
-    string v;
-    jsonHelper::getInstance()->append("hello", 1, req);
-    jsonHelper::getInstance()->append("hello", 2, req);
-    jsonHelper::getInstance()->append("hello", 3, req);
-    jsonHelper::getInstance()->append("hello", 4, req);
-    jsonHelper::getInstance()->getField(v, "hello", req);
+    ths.create_thread(boost::bind(&boost::asio::io_service::run, &ioservice));
+    ths.join_all();
 
-    
-    cout<<"req: "<<jsonHelper::getInstance()->str(req)<<endl;
 
 
 

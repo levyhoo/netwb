@@ -414,6 +414,16 @@ namespace net
         {
             manager->onConnectionMade(shared_from_this());
         }
+
+        boost::system::error_code err;
+        if (m_keepAliveInterval > 0)
+        {
+            sendKeepAlive(err);
+        }
+        if (m_timeoutInterval > 0)
+        {
+            timeoutCheck();
+        }
     }
 
     void NetConnection::onConnectionError(const boost::system::error_code& err)
