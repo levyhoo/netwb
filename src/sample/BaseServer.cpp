@@ -150,3 +150,34 @@ void BaseServer::sendResp(const ByteArray& resp, r_int16& cmd, const r_int64& se
     header.encode(bytes);
     connection->sendData(bytes, bytes.size());
 }
+
+void BaseServer::_stat(const ByteArray &param, const r_int64& seq, const boost::shared_ptr<NetConnection> &connection)
+{
+    string resp = "this is response of doSomething";
+    string status = "";
+    vector<DataEventRaw> UploadEvents, CreditEvents;
+    jsonHelper::getInstance()->getField(UploadEvents, "UploadEvents", param);
+    jsonHelper::getInstance()->getField(CreditEvents, "CreditEvents", param);
+    jsonHelper::getInstance()->getField(CreditEvents, "CreditEvents", param);
+    if(stat(UploadEvents, CreditEvents, seq, connection))
+    {
+        m_ioservice.post(boost::bind(&BaseServer::_send_stat, getPtr(), resp, status, seq, connection));
+    }
+}
+
+void BaseServer::_send_stat(const string& resp, const string& status, const r_int64& seq, const boost::shared_ptr<NetConnection> &connection)
+{
+    ByteArray response;
+    MAKERESPBEGIN(status);
+    ADDPARAM("resp", resp);
+    MAKERESPEND(response);
+    r_int16 cmd = (r_int16)NET_CMD_RPC;
+    r_int8 compress = (r_int8)COMPRESS_DOUBLE_ZLIB;
+    sendResp(response, cmd, seq, connection, compress);
+}
+
+void BaseServer::regist()
+{
+    boost::shared_lock<shared_mutex> lock(m_funcTableMutex);
+    m_funcTable.insert(make_pair<string, ProcessFunc>("stat", boost::bind(&BaseServer::_stat, getPtr(), _1, _2, _3)));
+}

@@ -3,7 +3,7 @@
 using namespace std;
 #include "Clog.h"
 #include <boost/lexical_cast.hpp>
-#include "jsonHelper.h"
+#include "StructsHelper.h"
 
 boost::asio::io_service ioservice;
 boost::asio::io_service::work wk(ioservice);
@@ -40,9 +40,27 @@ boost::asio::io_service::strand sd(ioservice);
 
 void send(ClientPtr client)
 {
+    DataEventRaw obj, obj1, obj2, obj3;
+    obj.id = 1;
+    obj.activeid = 2;
+    obj.walkdate = 3;
+    obj.userid = 4;
+    strcpy(obj.sourcetable, "hello");
+    memcpy(&obj1, &obj, sizeof(obj));
+    memcpy(&obj2, &obj, sizeof(obj));
+    memcpy(&obj3, &obj, sizeof(obj));
+    obj1.id = 12;
+    obj2.id = 13;
+    obj3.id = 14;
+    vector<DataEventRaw> up, crd;
+    up.push_back(obj);
+    up.push_back(obj1);
+    crd.push_back(obj2);
+    crd.push_back(obj3);
+    
     boost::asio::deadline_timer sendTimer(ioservice);
     sendTimer.expires_from_now(boost::posix_time::seconds(15));
-    sendTimer.async_wait(boost::BOOST_BIND(&Client::doSomething, client));
+    sendTimer.async_wait(boost::BOOST_BIND(&Client::stat, client, up, crd));
 }
 
 

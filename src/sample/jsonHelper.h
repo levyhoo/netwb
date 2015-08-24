@@ -11,6 +11,28 @@
 using namespace std;
 using namespace boost::property_tree;
 
+// #define CMD(Typename, T) \
+// void getValue##Typename(T& value, const ptree& pt, string field)\
+// {\
+//     value = pt.get<T>(field);\
+// }
+// 
+// #define CMDLIST() \
+//     CMD(Int, int);\
+//     CMD(Double, double);\
+//     CMD(Float, float);\
+//     CMD(String, string);
+// 
+// CMDLIST()
+// #undef CMD
+// 
+// void getValueCharArray(char* value, ptree pt, string field)
+// {
+//     string t = pt.get<string>(field);
+//     memcpy(value, t.c_str(), t.length() + 1);
+// }
+
+
 #define CODEC_DECLEAR() \
 public :\
     static Codec& instance()\
@@ -35,9 +57,10 @@ public :
         ss << (char *)&strJson[0];
         read_json(ss, pt);
     }
-    void write(Type& value, ptree::value_type& pt)
+    void write(Type& value, ptree::value_type& pv)
     {
-        value = pt.second.data();
+        ptree pt = pv.second;
+        value = pt.get<Type>(pv.first);
     }
     void getField(const string& field, Type& value, const ByteArray& strJson)
     {
@@ -64,7 +87,7 @@ public :
     //
     void makeArrayElement(const Type& value, ptree& pt)
     {
-        pt.push_back(std::make_pair<string, Type>("", value));
+        pt.push_back(std::make_pair("", value));
     }
 };
 
@@ -103,10 +126,12 @@ public:
     void makeJsonPt(const string& field, const std::vector<Type>& values, ptree& pts)
     {
         size_t len = values.size();
+        ptree pt;
         for(int i=0; i<len; i++)
         {
-            Codec<Type>::instance().makeArrayElement(values[i], pts);
+            Codec<Type>::instance().makeArrayElement(values[i], pt);
         }
+        pts.put_child(field, pt);
     }
 
 };
@@ -182,7 +207,28 @@ public:
         return false; 
     };
 
-    bool getSubJson(ByteArray& value, const string& field, const ByteArray& strJson);
+    bool getSubJson(ByteArray& value, const string& field, const ByteArray& strJson)
+    {
+        try
+        {
+            boost::lock_guard<boost::mutex> lock(m_mutex);
+            ptree pt;
+            std::stringstream ss((char *)&strJson[0]);
+            read_json(ss, pt);
+            ptree child = pt.get_child(field);
+            std::stringstream ret;
+            write_json(ret, child, false);
+            size_t len = ret.str().size() + 1;
+            value.resize(len);
+            memcpy(&value[0], ret.str().c_str(), len);
+            return true;
+        }
+        catch (...)
+        {
+        }
+
+        return false; 
+    }
 
     template<typename T>
     bool append(const string& field, const T& value, ByteArray& strJson)
@@ -211,7 +257,38 @@ public:
         return false;
     }
     
-    bool appendSub(const string& field, const ByteArray& value, ByteArray& strJson);
+    bool appendSub(const string& field, const ByteArray& value, ByteArray& strJson)
+    {
+
+        if (value.size() == 0)
+        {
+            return false;
+        }
+        try
+        {
+            boost::lock_guard<boost::mutex> lock(m_mutex);
+            ptree ptV, ptJ;
+            std::stringstream ssV((char*)&value[0]);
+            if (0 != strJson.size())
+            {
+                std::stringstream ssJ((char*)&strJson[0]);
+                read_json(ssJ, ptJ);
+            }
+            read_json(ssV, ptV);
+            ptJ.add_child(field, ptV);
+            std::stringstream ssRet;
+            write_json(ssRet, ptJ);
+            size_t len = ssRet.str().size() + 1;
+            strJson.clear();
+            strJson.resize(len);
+            memcpy(&strJson[0], ssRet.str().c_str(), len);
+            return true;
+        }
+        catch(...)
+        {
+        }
+        return false;
+    }
 
 
     template<typename T>
@@ -284,52 +361,6 @@ public:
     }
     
 };
-
-#define CUSTOM_DECLEAR(Type) \
-template <>\
-class Codec<Type>\
-{\
-    CODEC_DECLEAR();\
-public :\
-    void getField(const string& field, Type& value, const ByteArray& strJson)\
-    {\
-        for(size_t i=0; i<Type::m_desc.fields_.size(); i++)\
-        {\
-            string type_ = Type::m_desc.fields_[i].type_;\
-            string name_ = Type::m_desc.fields_[i].name_;\
-            Codec<#type_>::instance().getField(#name_), value.#name_, strJson)\
-        }\
-    }\
-    void makeJson(const string& field, const Type& value, ByteArray& strJson)\
-    {\
-    }\
-    void makeJsonPt(const string& field, const Type& value, ptree& pt)\
-    {\
-    }\
-}\
-\
-template <>\
-class Codec<boost::shared_ptr<Type> >\
-    {\
-    CODEC_DECLEAR();\
-public :\
-    void getField(const string& field, boost::shared_ptr<Type>& value, const ByteArray& strJson)\
-    {\
-        for(size_t i=0; i<Type::m_desc.fields_.size(); i++)\
-        {\
-            string type_ = Type::m_desc.fields_[i].type_;\
-            string name_ = Type::m_desc.fields_[i].name_;\
-            Codec<#type_>::instance().getField(#name_), *value.#name_, strJson)\
-        }\
-    }\
-    void makeJson(const string& field, const boost::shared_ptr<Type>& value, ByteArray& strJson)\
-    {\
-    }\
-    void makeJsonPt(const string& field, const boost::shared_ptr<Type>& value, ptree& pt)\
-    {\
-    }\
-}\
-
 
 #define MAKERESPBEGIN(status) \
     {\

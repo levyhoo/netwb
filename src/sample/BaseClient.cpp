@@ -3,7 +3,7 @@
 #include <net/NetPackage.h>
 
 BaseClient::BaseClient(boost::asio::io_service& ioservice, string serverIp, unsigned short serverPort)
-:NetClient(ioservice, serverIp, serverPort), m_requestSeq(0)
+:NetClient(ioservice, serverIp, serverPort), m_requestSeq(0), m_autoReConnect(true)
 {
 
 }
@@ -15,7 +15,10 @@ void BaseClient::onConnectionMade(boost::shared_ptr<NetConnection> connection)
 
 void BaseClient::onConnectionError(const boost::system::error_code& err, boost::shared_ptr<NetConnection> connection)
 {
-
+    if (!isConnected() && m_autoReConnect)
+    {
+        start(false);
+    }
 }
 
 void BaseClient::onPackageReceived(const NetPackageHeader& header, const unsigned char* contentP, const size_t& contentLen, boost::shared_ptr<NetConnection> connection)
@@ -94,7 +97,6 @@ void BaseClient::onPackageReceived(const NetPackageHeader& header, const unsigne
         break;
     case NET_CMD_KEEPALIVE:
         {
-            //发送保活反馈
             NetPackageHeader header(NET_CMD_KEEPALIVE_RESPONSE, 0, 0, 0);
             header.m_length = sizeof(r_int32) + NET_PACKAGE_HEADER_LENGTH;
 
@@ -104,7 +106,7 @@ void BaseClient::onPackageReceived(const NetPackageHeader& header, const unsigne
             connection->sendData(bytes, bytes.size());
         }
         break;
-    case NET_CMD_KEEPALIVE_RESPONSE:
+    case NET_CMD_KEEPALIVE_RESPONSE: //接收到心跳包反馈
         break;
     default:
         break;
@@ -146,6 +148,23 @@ void BaseClient::request(const ByteArray& param, CallBack cb, r_uint16 cmd, r_ui
         boost::mutex::scoped_lock lock(m_mutex);
         m_CBs[seq] = cb;
     }
+}
+
+void BaseClient::_stat(vector<DataEventRaw>& UpdateEvents, vector<DataEventRaw>& CreditEvents)
+{
+    ByteArray req;
+    MAKEREQBEGIN("stat");
+    ADDPARAM("UploadEvents", UpdateEvents);
+    ADDPARAM("CreditEvents", CreditEvents);
+    MAKEREQEND(req);
+    request(req, boost::bind(&BaseClient::_onStat, getPtr(), _1, _2), NET_CMD_RPC, COMPRESS_DOUBLE_ZLIB); 
+}
+
+void BaseClient::_onStat(ByteArray& resp, string error)
+{
+     string strResp = "";
+     jsonHelper::getInstance()->getField(strResp, "resp", resp);
+     onStat(strResp, error);
 }
 
 

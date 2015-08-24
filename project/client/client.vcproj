@@ -189,10 +189,6 @@
 				RelativePath="..\..\src\sample\Clog.cpp"
 				>
 			</File>
-			<File
-				RelativePath="..\..\src\sample\jsonHelper.cpp"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="Í·ÎÄ¼þ"
@@ -217,6 +213,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\sample\Singleton.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\sample\StructsHelper.h"
 				>
 			</File>
 		</Filter>

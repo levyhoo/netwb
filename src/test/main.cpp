@@ -8,53 +8,16 @@ using namespace std;
 typedef boost::shared_ptr<string> strPtr;
 boost::mutex mtx;
 
-namespace data
-{
-    struct FieldDesc
-    {
-        string name_;
-        string type_;
-        FieldDesc(string n, string t):name_(n), type_(t){};
-    };
-
-    struct structDesc
-    {
-        int structId_;
-        vector<FieldDesc> fields_;
-    };
-
-   
-
-    class testData
-    {
-    public:
-        string name;
-        int id;
-        double score;
-
-        static structDesc desc;
-    };
-
-    void registTestData()
-    {
-        testData::desc.structId_ = 1;
-        testData::desc.push(FieldDesc("name", "std::string"));
-        testData::desc.push(FieldDesc("id", "int"));
-        testData::desc.push(FieldDesc("score", "double"));
-    }
-
-
-}
-
 
 void test(int id)
 {
     strPtr resp = strPtr(new string("hello"));
     string status("status");
-    testData obj;
-    obj.id = 12;
-    obj.name = "huliwei";
-    obj.score = 100;
+
+    vector<string> obj, re;
+    obj.push_back("1");
+    obj.push_back("2");
+    obj.push_back("3");
 
     ByteArray response;
     MAKERESPBEGIN(status);
@@ -66,11 +29,11 @@ void test(int id)
         //boost::mutex::scoped_lock lock(mtx);
         cout<<"response : "<< jsonHelper::getInstance()->str(response)<<endl;
     }
+    jsonHelper::getInstance()->getField(re, "obj", response);
 }
 
 void main()
 {
-    registTestData();
     boost::thread_group ths;
     for(int i=0; i<1; i++)
     {
