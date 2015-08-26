@@ -1,4 +1,4 @@
-﻿#ifndef BASE_CIPHER_H_
+#ifndef BASE_CIPHER_H_
 #define BASE_CIPHER_H_
 
 #include "common/DataType.h"

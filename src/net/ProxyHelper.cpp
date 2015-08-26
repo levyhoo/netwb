@@ -1,4 +1,4 @@
-﻿#include "common/Stdafx.h"
+#include "common/Stdafx.h"
 #include "net/ProxyHelper.h"
 #include "stream.h"
 #include "strings.h"

@@ -1,4 +1,4 @@
-﻿#include "net/base64.h"
+#include "net/base64.h"
 #include <string.h>
 #include "net/stdbool.h"
 #include <ctype.h>

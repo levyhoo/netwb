@@ -14,9 +14,9 @@ int main(int argc, char** argv)
     }
     Clog::getInstance()->init("../../config/config.log4cxx", false);
     Clog::getInstance()->enableLog(true);
-    boost::asio::io_service io;
+    boost::asio::io_service io, dispIo;
     boost::asio::io_service::work wk(io);
-    ServerPtr ser = ServerPtr(new Server(io, "127.0.0.1", 12345));
+    ServerPtr ser = ServerPtr(new Server(io, dispIo, "127.0.0.1", 12345));
     if (ser != NULL)
     {
         ser->start();
@@ -27,6 +27,7 @@ int main(int argc, char** argv)
     for (int i=0; i<threadnum; i++)
     {
         ths.create_thread(boost::BOOST_BIND(&boost::asio::io_service::run, &io));
+        ths.create_thread(boost::BOOST_BIND(&boost::asio::io_service::run, &dispIo));
     }
     ths.join_all();
     return 0;

@@ -1,4 +1,4 @@
-﻿#include "common/Stdafx.h"
+#include "common/Stdafx.h"
 #include "net/NetManager.h"
 //---
 #include <iostream>

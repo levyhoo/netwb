@@ -1,4 +1,4 @@
-﻿#ifndef __PROXY_INFO_H__
+#ifndef __PROXY_INFO_H__
 #define __PROXY_INFO_H__
 #include "net/NetCommon.h"
 

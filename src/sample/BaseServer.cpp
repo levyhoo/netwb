@@ -5,8 +5,8 @@
 #include <common/NetCommand.h>
 #include "Clog.h"
 
-BaseServer::BaseServer(io_service& ioservice, string listenIp, unsigned short listenPort)
-:NetServer(ioservice, listenIp, listenPort)
+BaseServer::BaseServer(io_service& ioservice, io_service& io, string listenIp, unsigned short listenPort)
+:m_io(io), m_wk(io), m_strand(io), NetServer(ioservice, listenIp, listenPort)
 {
 }
 
@@ -63,6 +63,11 @@ void BaseServer::onPackageReceived(const NetPackageHeader& header, const unsigne
             }
         }
     }
+    else
+    {
+        tmpData.resize(contentLen+1);
+        memcpy(&tmpData[0], contentP, contentLen);
+    }
 
     switch (header.m_cmd)
     {
@@ -74,7 +79,7 @@ void BaseServer::onPackageReceived(const NetPackageHeader& header, const unsigne
             {
                 if (jsonHelper::getInstance()->getSubJson(param, "param", tmpData))
                 {
-                    onRequest(func, param, header.m_seq, connection);
+                    m_strand.post(boost::bind(&BaseServer::onRequest, getPtr(), func, param, header.m_seq, connection));
                 }
             }
             else
@@ -153,15 +158,14 @@ void BaseServer::sendResp(const ByteArray& resp, r_int16& cmd, const r_int64& se
 
 void BaseServer::_stat(const ByteArray &param, const r_int64& seq, const boost::shared_ptr<NetConnection> &connection)
 {
-    string resp = "this is response of doSomething";
-    string status = "";
+    string resp = "this is response of stat";
+    string status = "ok";
     vector<DataEventRaw> UploadEvents, CreditEvents;
     jsonHelper::getInstance()->getField(UploadEvents, "UploadEvents", param);
     jsonHelper::getInstance()->getField(CreditEvents, "CreditEvents", param);
-    jsonHelper::getInstance()->getField(CreditEvents, "CreditEvents", param);
     if(stat(UploadEvents, CreditEvents, seq, connection))
     {
-        m_ioservice.post(boost::bind(&BaseServer::_send_stat, getPtr(), resp, status, seq, connection));
+        m_io.post(boost::bind(&BaseServer::_send_stat, getPtr(), resp, status, seq, connection));
     }
 }
 
@@ -180,4 +184,28 @@ void BaseServer::regist()
 {
     boost::shared_lock<shared_mutex> lock(m_funcTableMutex);
     m_funcTable.insert(make_pair<string, ProcessFunc>("stat", boost::bind(&BaseServer::_stat, getPtr(), _1, _2, _3)));
+    m_funcTable.insert(make_pair<string, ProcessFunc>("test", boost::bind(&BaseServer::_test, getPtr(), _1, _2, _3)));
+}
+
+void BaseServer::_test(const ByteArray &param, const r_int64& seq, const boost::shared_ptr<NetConnection> &connection)
+{
+    string resp = "this is response of test";
+    string status = "ok";
+    int id=0;
+    jsonHelper::getInstance()->getField(id, "id", param);
+    if(test(id, seq, connection))
+    {
+        m_io.post(boost::bind(&BaseServer::_send_test, getPtr(), resp, status, seq, connection));
+    }
+}
+
+void BaseServer::_send_test(const string& resp, const string& status, const r_int64& seq, const boost::shared_ptr<NetConnection> &connection)
+{
+    ByteArray response;
+    MAKERESPBEGIN(status);
+    ADDPARAM("resp", resp);
+    MAKERESPEND(response);
+    r_int16 cmd = (r_int16)NET_CMD_RPC;
+    r_int8 compress = (r_int8)COMPRESS_DOUBLE_ZLIB;
+    sendResp(response, cmd, seq, connection, compress);
 }

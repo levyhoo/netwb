@@ -1,4 +1,4 @@
-﻿#include "common/Stdafx.h"
+#include "common/Stdafx.h"
 #include "net/NetSocket.h"
 #include <boost/asio/ssl.hpp>
 #include "net/ProxyHelper.h"

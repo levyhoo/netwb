@@ -1,4 +1,4 @@
-﻿#include "common/Stdafx.h"
+#include "common/Stdafx.h"
 #include "common/NetCommand.h"
 #include "net/NetPackageAlloc.h"
 #include "net/NetPackage.h"

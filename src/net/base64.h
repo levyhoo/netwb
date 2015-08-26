@@ -1,4 +1,4 @@
-﻿
+
 #ifndef BASE64_H_
 #define BASE64_H_ 1
 

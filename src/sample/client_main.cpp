@@ -37,30 +37,15 @@ boost::asio::io_service::strand sd(ioservice);
 //     }
 // 
 // }
-
-void send(ClientPtr client)
+vector<DataEventRaw> up, crd;
+boost::mutex mtx;
+void send(ClientPtr client, int num )
 {
-    DataEventRaw obj, obj1, obj2, obj3;
-    obj.id = 1;
-    obj.activeid = 2;
-    obj.walkdate = 3;
-    obj.userid = 4;
-    strcpy(obj.sourcetable, "hello");
-    memcpy(&obj1, &obj, sizeof(obj));
-    memcpy(&obj2, &obj, sizeof(obj));
-    memcpy(&obj3, &obj, sizeof(obj));
-    obj1.id = 12;
-    obj2.id = 13;
-    obj3.id = 14;
-    vector<DataEventRaw> up, crd;
-    up.push_back(obj);
-    up.push_back(obj1);
-    crd.push_back(obj2);
-    crd.push_back(obj3);
-    
-    boost::asio::deadline_timer sendTimer(ioservice);
-    sendTimer.expires_from_now(boost::posix_time::seconds(15));
-    sendTimer.async_wait(boost::BOOST_BIND(&Client::stat, client, up, crd));
+
+    for (int i=0; i<num; i++)
+    {
+        ioservice.post(boost::bind(&Client::test, client, i));
+    }
 }
 
 
@@ -68,14 +53,32 @@ int main(int argc, char** argv)
 {
     
     int threadsnum = 1;
-    if (argc == 2)
+    int num = 1;
+    if (argc == 3)
     {
         threadsnum = boost::lexical_cast<int>(argv[1]);
+        num = boost::lexical_cast<int>(argv[2]);
     }
     Clog::getInstance()->init("../../config/config_client.log4cxx", false);
     Clog::getInstance()->enableLog(true);
     boost::thread_group ths;
     std::vector<ClientPtr> clients;
+//     DataEventRaw obj, obj1, obj2, obj3;
+//     obj.id = 1;
+//     obj.activeid = 2;
+//     obj.walkdate = 3;
+//     obj.userid = 4;
+//     strcpy(obj.sourcetable, "hello");
+//     memcpy(&obj1, &obj, sizeof(obj));
+//     memcpy(&obj2, &obj, sizeof(obj));
+//     memcpy(&obj3, &obj, sizeof(obj));
+//     obj1.id = 12;
+//     obj2.id = 13;
+//     obj3.id = 14;
+//     up.push_back(obj);
+//     up.push_back(obj1);
+//     crd.push_back(obj2);
+//     crd.push_back(obj3);
 
     for (int i=0; i<threadsnum; i++)
     {
@@ -84,7 +87,7 @@ int main(int argc, char** argv)
         {
             clients.push_back(client);
             client->start(false);
-            ths.create_thread(boost::BOOST_BIND(send, client));
+            ths.create_thread(boost::BOOST_BIND(send, client, num));
         }
     }
     

@@ -1,4 +1,4 @@
-﻿#include <common/Stdafx.h>
+#include <common/Stdafx.h>
 #include <net/NetPackage.h>
 #ifdef _WIN32_WINNT
 #include <winsock.h>

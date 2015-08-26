@@ -1,4 +1,4 @@
-﻿#ifndef _ISocket_2013_5_28_h__
+#ifndef _ISocket_2013_5_28_h__
 #define _ISocket_2013_5_28_h__
 
 #include <boost/asio.hpp>

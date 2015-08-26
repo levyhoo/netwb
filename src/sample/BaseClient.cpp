@@ -167,6 +167,23 @@ void BaseClient::_onStat(ByteArray& resp, string error)
      onStat(strResp, error);
 }
 
+void BaseClient::_test(int id)
+{
+    ByteArray req;
+    MAKEREQBEGIN("test");
+    ADDPARAM("id", id);
+    MAKEREQEND(req);
+    request(req, boost::bind(&BaseClient::_onTest, getPtr(), _1, _2), NET_CMD_RPC, COMPRESS_DOUBLE_ZLIB); 
+}
+
+void BaseClient::_onTest(ByteArray& resp, string error)
+{
+    string strResp = "";
+    jsonHelper::getInstance()->getField(strResp, "resp", resp);
+    onTest(strResp, error);
+}
+
+
 
 
 

@@ -1,4 +1,4 @@
-﻿
+
 #ifndef __NET_PACKAGE__
 #define __NET_PACKAGE__
 

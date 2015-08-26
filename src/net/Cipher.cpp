@@ -1,4 +1,4 @@
-﻿#include "common/Stdafx.h"
+#include "common/Stdafx.h"
 #include "net/Cipher.h"
 #include "net/base64.h"
 #include "openssl/sha.h"

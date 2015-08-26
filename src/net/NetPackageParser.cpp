@@ -1,4 +1,4 @@
-﻿#include <common/Stdafx.h>
+#include <common/Stdafx.h>
 #include <net/NetPackageParser.h>
 #include "BaseCipher.h"
 #ifdef _WIN32_WINNT

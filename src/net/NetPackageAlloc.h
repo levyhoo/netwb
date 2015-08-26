@@ -1,4 +1,4 @@
-﻿#ifndef NetPackegeAlloc_2014_3_10_H
+#ifndef NetPackegeAlloc_2014_3_10_H
 #define NetPackegeAlloc_2014_3_10_H
 
 #if _MSC_VER > 1000

@@ -28,9 +28,13 @@ public:
 
     virtual void stat(vector<DataEventRaw>& UpdateEvents, vector<DataEventRaw>& CreditEvents) = 0;
     virtual void onStat(string& resp, string error) = 0;
-
     void _stat(vector<DataEventRaw>& UpdateEvents, vector<DataEventRaw>& CreditEvents);
     void _onStat(ByteArray& resp, string error);
+
+    virtual void test(int id) = 0;
+    virtual void onTest(string& resp, string error) = 0;
+    void _test(int id);
+    void _onTest(ByteArray& resp, string error);
 private:
     CBTable m_CBs;
     r_int64 m_requestSeq;

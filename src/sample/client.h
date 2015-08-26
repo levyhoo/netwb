@@ -14,5 +14,8 @@ public:
     ClientPtr getPtr();
     virtual void stat(vector<DataEventRaw>& UpdateEvents, vector<DataEventRaw>& CreditEvents);
     virtual void onStat(string& resp, string error);
+
+    virtual void test(int id);
+    virtual void onTest(string& resp, string error);
 };
 #endif

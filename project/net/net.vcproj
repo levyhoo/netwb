@@ -92,8 +92,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(SolutionDir)$\bin\(ConfigurationName)"
-			IntermediateDirectory="$(SolutionDir)$\build\(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)\bin\$(ConfigurationName)"
+			IntermediateDirectory="$(SolutionDir)\build\$(ConfigurationName)"
 			ConfigurationType="2"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
@@ -118,8 +118,8 @@
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
 				AdditionalIncludeDirectories="&quot;$(OPENSSL_ROOT)&quot;;&quot;$(BOOST_ROOT)&quot;;&quot;$(SolutionDir)\src&quot;"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;NET_EXPORTS"
-				RuntimeLibrary="2"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;EXPORT_NET"
+				RuntimeLibrary="1"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -136,9 +136,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="iconv.lib ssleay32.lib  libeay32.lib"
+				AdditionalDependencies="iconv.lib ssleay32.lib  libeay32.lib Lzma.lib zlib.lib"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)\iconv&quot;;&quot;$(BOOST_ROOT)\stage\lib&quot;"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\src\Lib&quot;;&quot;$(OPENSSL_ROOT)\..\lib&quot;;&quot;$(BOOST_ROOT)\stage\lib&quot;"
+				GenerateManifest="false"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"

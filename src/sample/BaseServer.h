@@ -13,7 +13,7 @@ typedef boost::shared_ptr<BaseServer> BaseServerPtr;
 class BaseServer : public NetServer
 {
 public:
-    BaseServer(io_service& ioservice, string listenIp, unsigned short listenPort);
+    BaseServer(io_service& ioservice, io_service& io, string listenIp, unsigned short listenPort);
     virtual ~BaseServer(){};
 
     virtual void regist();
@@ -29,9 +29,16 @@ public:
     void _stat(const ByteArray &param, const r_int64& seq, const boost::shared_ptr<NetConnection> &connection);
     void _send_stat(const string& resp, const string& status, const r_int64& seq, const boost::shared_ptr<NetConnection> &connection);
 
+    virtual bool test(int id, const r_int64& seq, const boost::shared_ptr<NetConnection> &connection) = 0;
+    void _test(const ByteArray &param, const r_int64& seq, const boost::shared_ptr<NetConnection> &connection);
+    void _send_test(const string& resp, const string& status, const r_int64& seq, const boost::shared_ptr<NetConnection> &connection);
+
 protected:
     boost::shared_mutex         m_funcTableMutex;
     FuncTable                   m_funcTable;
+    boost::asio::io_service     &m_io;
+    boost::asio::io_service::strand    m_strand;
+    boost::asio::io_service::work m_wk;
 };
 
 #endif

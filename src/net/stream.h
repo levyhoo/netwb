@@ -1,4 +1,4 @@
-﻿#ifndef SERVER2_UTILS_STREAM_H_
+#ifndef SERVER2_UTILS_STREAM_H_
 #define SERVER2_UTILS_STREAM_H_
 #include "common/type.h"
 #include "common/DataType.h"

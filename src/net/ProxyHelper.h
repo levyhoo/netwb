@@ -1,4 +1,4 @@
-﻿#ifndef PROXY_HELPER_2012_06_13_H_
+#ifndef PROXY_HELPER_2012_06_13_H_
 #define PROXY_HELPER_2012_06_13_H_
 
 #include <net/NetCommon.h>

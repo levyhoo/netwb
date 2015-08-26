@@ -194,6 +194,10 @@ public:
     template<typename T>
     bool getField(T& value, const string& field, const ByteArray& strJson)
     {
+        if (strJson.size() == 0)
+        {
+            return false;
+        }
         try
         {
             boost::lock_guard<boost::mutex> lock(m_mutex);
@@ -209,6 +213,10 @@ public:
 
     bool getSubJson(ByteArray& value, const string& field, const ByteArray& strJson)
     {
+        if (strJson.size() == 0)
+        {
+            return false;
+        }
         try
         {
             boost::lock_guard<boost::mutex> lock(m_mutex);
@@ -332,7 +340,7 @@ public:
             pt.put_child("param", pts);
             std::stringstream ss;
             write_json(ss, pt, false);
-            size_t len = ss.str().size() + 1;
+            size_t len = ss.str().size();
             resp.resize(len);
             memcpy(&resp[0], ss.str().c_str(), len);
             return true;

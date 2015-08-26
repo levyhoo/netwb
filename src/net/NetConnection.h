@@ -1,4 +1,4 @@
-﻿#ifndef __NET_CONNECTION_H__
+#ifndef __NET_CONNECTION_H__
 #define __NET_CONNECTION_H__
 
 #include "net/NetCommon.h"

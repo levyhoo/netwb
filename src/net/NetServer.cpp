@@ -1,4 +1,4 @@
-﻿#include "common/Stdafx.h"
+#include "common/Stdafx.h"
 #include "net/NetServer.h"
 #include "net/NetSocket.h"
 

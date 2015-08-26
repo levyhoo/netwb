@@ -1,4 +1,4 @@
-﻿#include "common/Stdafx.h"
+#include "common/Stdafx.h"
 #include "common/MarketType.h"
 #include "strings.h"
 #include <iconv/iconv.h>

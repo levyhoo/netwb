@@ -1,4 +1,4 @@
-﻿/**
+/**
 * 网络包解析器
 * 
 * @author   huangjian
